@@ -1,0 +1,3 @@
+sku,title,action,description,url
+sample-tool,Sample free tool,free,"A sample free listing. Replace the description and link with your own.",https://www.example.com/free-tool
+sample-shop,Sample shop listing,link,"Link to a listing you already sell from another shop.",https://www.example.com/shop-item

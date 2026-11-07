@@ -1,0 +1,11 @@
+/.env
+/.env.*
+!/.env.example
+/.local/
+/.mcp.json
+/var/
+/vendor/
+/node_modules/
+*.sqlite
+*.sqlite-*
+*.log

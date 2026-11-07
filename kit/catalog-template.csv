@@ -1,0 +1,4 @@
+sku,title,action,description,currency,price,version
+free-example,Free Example,free,Describe the free download,,,1
+support-example,Support Example,tip,Optional support with no entitlement,,,1
+kit-example,Creator Kit,paid,Describe the exact downloadable file,USD,3.00,1
