@@ -9,10 +9,9 @@
 **AI drafts the listing. You approve it. PayPal Sandbox completes the sale.**
 
 [![License](https://img.shields.io/badge/license-MIT-9b5cf6?style=flat-square&labelColor=1a1a2e)](LICENSE)
-[![Runtime](https://img.shields.io/badge/runtime-PHP%208.3-63b3ed?style=flat-square&labelColor=1a1a2e)](docs/SETUP.md)
-[![PayPal](https://img.shields.io/badge/paypal-sandbox%20%C2%B7%20orders%20v2-ff6ec4?style=flat-square&labelColor=1a1a2e)](docs/CHECKOUT.md)
+[![Runtime](https://img.shields.io/badge/runtime-PHP%208.3%20%C2%B7%20no%20build-63b3ed?style=flat-square&labelColor=1a1a2e)](docs/SETUP.md)
+[![PayPal](https://img.shields.io/badge/paypal-sandbox%20orders%20v2-ff6ec4?style=flat-square&labelColor=1a1a2e)](docs/CHECKOUT.md)
 [![AI](https://img.shields.io/badge/ai-structured%20suggestions-ff6b00?style=flat-square&labelColor=1a1a2e)](docs/CATALOG.md)
-[![Build](https://img.shields.io/badge/build-none%20%C2%B7%20single%20stylesheet-9b5cf6?style=flat-square&labelColor=1a1a2e)](docs/DEVELOPMENT.md)
 
 [Local setup](docs/SETUP.md) · [Judge walkthrough](docs/JUDGE-WALKTHROUGH.md) · [PayPal resources](docs/PAYPAL.md) · [Docs index](docs/README.md)
 
