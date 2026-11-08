@@ -1,6 +1,6 @@
 # PayPal resources
 
-StoreLift uses the PayPal JavaScript SDK for buyer approval and the server-side Orders v2 API for creating and capturing Sandbox orders. Its PHP webhook verifies PayPal signatures before changing download access. Catalog suggestions use the configured model provider, and the operator reviews the draft before approval. Start with the [StoreLift setup](../README.md#run-the-sandbox-storefront).
+StoreLift uses the PayPal JavaScript SDK for buyer approval and the server-side Orders v2 API for creating and capturing Sandbox orders. Its PHP webhook verifies PayPal signatures before changing download access. Catalog suggestions use the configured model provider, and the operator reviews the draft before approval. Start with the [StoreLift setup](SETUP.md).
 
 ## Checkout and testing
 

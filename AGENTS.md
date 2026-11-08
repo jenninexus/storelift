@@ -1,6 +1,6 @@
 # StoreLift
 
-StoreLift is a standalone creator storefront prototype for the PayPal AI Hackathon. Read [README.md](README.md) for setup and [docs/PAYPAL.md](docs/PAYPAL.md) for integration references. The application uses PHP 8.3+, SQLite and vanilla JavaScript.
+StoreLift is a standalone creator storefront prototype for the PayPal AI Hackathon. Read [README.md](README.md) for the product summary, [docs/README.md](docs/README.md) for setup, catalog, checkout and development detail, and [docs/PAYPAL.md](docs/PAYPAL.md) for integration references. The application uses PHP 8.3+, SQLite and vanilla JavaScript.
 
 - Keep the PayPal integration in sandbox. Use separate sandbox buyer and merchant accounts.
 - Follow the [PayPal example command](.claude/commands/paypal.example.md) for checkout and optional MCP setup. Each installation supplies its own sandbox credentials. Keep operator-specific pointers in `.local/paypal.md`.

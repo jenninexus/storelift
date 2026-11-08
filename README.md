@@ -1,69 +1,77 @@
+<div align="center">
+
+<img src="docs/images/storelift-hero.jpg" alt="StoreLift — a creator catalog becomes a storefront: AI suggestions, an approved preview, a protected ZIP download" width="880">
+
 # StoreLift
 
-StoreLift turns a creator catalog into an editable storefront preview. Upload your own CSV or import the public JenniNexus products page, review the listings, and approve a version you can export. The separate Creator Demo Kit takes a buyer through PayPal Sandbox checkout to a verified receipt and protected ZIP download.
+### Catalog in. Storefront out.
 
-[Local setup](#run-the-sandbox-storefront) · [Judge walkthrough](#judge-walkthrough) · [Bring your catalog](#bring-your-catalog) · [PayPal resources](docs/PAYPAL.md) · [Development](#development)
+**AI drafts the listing. You approve it. PayPal Sandbox completes the sale.**
 
-## Run the sandbox storefront
+[![License](https://img.shields.io/badge/license-MIT-9b5cf6?style=flat-square&labelColor=1a1a2e)](LICENSE)
+[![Runtime](https://img.shields.io/badge/runtime-PHP%208.3-63b3ed?style=flat-square&labelColor=1a1a2e)](docs/SETUP.md)
+[![PayPal](https://img.shields.io/badge/paypal-sandbox%20%C2%B7%20orders%20v2-ff6ec4?style=flat-square&labelColor=1a1a2e)](docs/CHECKOUT.md)
+[![AI](https://img.shields.io/badge/ai-structured%20suggestions-ff6b00?style=flat-square&labelColor=1a1a2e)](docs/CATALOG.md)
+[![Build](https://img.shields.io/badge/build-none%20%C2%B7%20single%20stylesheet-9b5cf6?style=flat-square&labelColor=1a1a2e)](docs/DEVELOPMENT.md)
 
-To try catalog import first, start the app with `php -S 127.0.0.1:8015 -t public public/index.php` from the repository root and open [the local storefront](http://127.0.0.1:8015/). Configure PayPal to enable the kit purchase.
+[Local setup](docs/SETUP.md) · [Judge walkthrough](docs/JUDGE-WALKTHROUGH.md) · [PayPal resources](docs/PAYPAL.md) · [Docs index](docs/README.md)
 
-1. Install PHP 8.3 or newer with `curl`, `dom`, `pdo_sqlite` and `zip` enabled.
-2. In [PayPal Developer Apps & Credentials](https://developer.paypal.com/dashboard/applications/sandbox), choose **Sandbox → Create App → Merchant**. Choose a sandbox Business account. Keep a separate sandbox Personal account for the buyer. See [PayPal’s setup guide](https://developer.paypal.com/api/get-started/).
-3. On Windows, run `pwsh -NoProfile -File scripts/configure-sandbox.ps1`. Enter the sandbox app’s Client ID and Secret at the hidden prompts. The script generates a download signing key and saves the configuration under your local StoreLift profile. On other systems, copy `.env.example` to `.env.local`, fill in the sandbox values and generate a signing key using the example command. Operators may set `STORELIFT_ENV_FILE` to an external private configuration file. Process environment variables override file settings.
-4. Run `php scripts/check-paypal.php` to verify sandbox OAuth. The check reports whether PayPal accepts the app and omits tokens and credential values. On Windows, PHP cURL uses the native certificate store when supported.
-5. Run `php scripts/build-demo-kit.php`, then `php -S 127.0.0.1:8015 -t public public/index.php`. On Windows, `pwsh -NoProfile -File scripts/start-local.ps1` performs both steps. Open [StoreLift Sandbox](http://127.0.0.1:8015/).
-6. Select the PayPal button and approve payment using the sandbox **Personal** buyer. Open the verified receipt and download the ZIP. Refresh in the same browser to renew an expired link. The visible test amount is denominated in sandbox USD.
+</div>
 
-## Judge walkthrough
+StoreLift turns a creator catalog into an editable storefront preview. Import your own CSV, or the public JenniNexus products page, review each listing, and approve one revision you can export or embed. A separate Creator Demo Kit carries a buyer from PayPal Sandbox approval to a verified receipt and a protected ZIP download.
 
-Open the hosted demo supplied with the submission or start StoreLift locally using the setup above. For the full local walkthrough, configure both PayPal Sandbox and the [AI provider](#review-and-approve) before opening the storefront.
+- **Import what you already have.** A CSV of up to 20 listings, or one supported public catalog URL.
+- **Keep the meaning of every link.** Free downloads stay free, tips stay tips, memberships stay memberships. AI suggests wording and categories, never prices.
+- **Approve once, reuse everywhere.** The preview, the JSON export and the embeddable card all read the approved revision, not the model's draft.
+- **Finish a real Sandbox sale.** JavaScript SDK approval, server-side Orders v2 capture, a receipt bound to the buyer's session, and a download link that a signed refund revokes.
 
-1. Enter `https://jenninexus.com/products` under **JenniNexus example URL**, then choose **Import catalog**. You can also start from the [sample CSV](examples/catalog.csv).
-2. Choose **Get AI suggestions**. Compare one suggestion with the original description and choose **Use suggested description** if you want to apply it. Select **Approve storefront preview**. The original free, tip, and membership links stay attached to their listings.
-3. Follow **Try the Creator Demo Kit checkout** and approve the $3.00 USD test payment with a separate PayPal Sandbox **Personal** buyer. The receipt will show **Sandbox payment verified** and offer **Download Creator Demo Kit**.
+## Quick start
 
-Keep the same browser session from approval through download. Use the dedicated test access supplied with a hosted submission. For local setup, use your own authorized provider and Sandbox credentials.
+```bash
+php scripts/build-demo-kit.php
+php -S 127.0.0.1:8015 -t public public/index.php
+```
 
-## How checkout works
+Open <http://127.0.0.1:8015/>. Catalog import, review and approval work immediately; the kit checkout needs PayPal Sandbox credentials. On Windows, `pwsh -NoProfile -File scripts/start-local.ps1` builds the kit and starts the server on a free port.
 
-- StoreLift freezes the SKU, amount, currency, kit version and file hash before creating an order. It records the merchant PayPal assigned, or checks the optional configured merchant ID.
-- The [PayPal JavaScript SDK](https://developer.paypal.com/studio/checkout/standard/integrate) handles buyer approval. PHP uses [Orders v2](https://developer.paypal.com/api/orders/v2) to capture and read the result. The server compares the returned order and capture to the saved record before granting access.
-- SQLite binds the receipt to the current browser session. The app verifies the signed download link, expiry, entitlement and file hash before sending the ZIP. A saved receipt survives a server restart when its SQLite and session storage persist.
-- An HTTPS demo can register `/api/webhook` for `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.REFUNDED` and `PAYMENT.CAPTURE.REVERSED`. Set `PAYPAL_SANDBOX_WEBHOOK_ID` from that registration. StoreLift asks PayPal to verify the signature and stores event IDs to handle retries. A refund or reversal revokes the affected capture. Verify real delivery and revocation in the hosted sandbox before judge access. [PayPal webhook setup](https://developer.paypal.com/api/rest/webhooks/rest/)
+Full walkthrough — PHP 8.3 extensions, the Sandbox Merchant app, the configuration script, the OAuth check and hosting: **[docs/SETUP.md](docs/SETUP.md)**.
 
-For hosting, serve `public/` as the web root and route the app URLs to `public/index.php`. Keep `var/` or `STORELIFT_STATE_DIR` on persistent private storage and set `STORELIFT_HTTPS=1` behind a TLS proxy. The PHP development server is for local QA. The app connects to PayPal Sandbox only. Configuration, receipts and test accounts belong in private storage.
+## The journey
 
-To mount StoreLift under a path such as `/storelift/`, set the PHP worker environment variable `STORELIFT_BASE_PATH=/storelift`. Redirect the bare mount to its trailing-slash URL. Serve the two static assets under that mount, and forward the original request URI for the app's page and API routes to `public/index.php`. The catalog endpoint is `/api/catalog`. The catalog and webhook URLs include the same mount prefix.
+| Step | What happens | Reference |
+| --- | --- | --- |
+| 1 · Import | A CSV upload, or one allowlisted URL, is fetched and parsed into listings with source evidence. | [CATALOG](docs/CATALOG.md) |
+| 2 · Review | AI proposes descriptions, categories, action labels and missing-information warnings. Editing by hand always works. | [CATALOG](docs/CATALOG.md) |
+| 3 · Approve | Approval freezes a catalog revision for this browser session. Export and embed read that revision. | [CATALOG](docs/CATALOG.md) |
+| 4 · Checkout | The Creator Demo Kit order is created, approved in PayPal Sandbox, captured server-side and released as a signed ZIP link. | [CHECKOUT](docs/CHECKOUT.md) |
 
-## Bring your catalog
+## Docs
 
-**Your own listings.** Copy the [sample CSV](examples/catalog.csv), replace the example rows with your listings, then choose **Import CSV**. Use up to 20 listings in a UTF-8 file under 24 KB. Each row needs a stable lowercase `sku`, a `title`, an `action`, a short `description`, and a public HTTPS `url`. Actions are `free`, `tip`, `membership`, or `link`. Use `link` for an existing item that buyers purchase on another shop.
+| | |
+| --- | --- |
+| [`docs/README.md`](docs/README.md) | Documentation index |
+| [`docs/SETUP.md`](docs/SETUP.md) | Install, configure Sandbox, run locally, mount under a path |
+| [`docs/JUDGE-WALKTHROUGH.md`](docs/JUDGE-WALKTHROUGH.md) | The three-step review path for a fresh session |
+| [`docs/CATALOG.md`](docs/CATALOG.md) | CSV format, supported imports, AI configuration, approval rules |
+| [`docs/CHECKOUT.md`](docs/CHECKOUT.md) | Order, capture, webhook, entitlement and download verification |
+| [`docs/PAYPAL.md`](docs/PAYPAL.md) | Official PayPal references and optional developer tooling |
+| [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) | Tests, source layout, stylesheet tokens, demo kit |
+| [`AGENTS.md`](AGENTS.md) | Repository map for contributors and coding agents |
 
-**A catalog from another shop.** Export product or listing data from Shopify or Etsy and map it to the sample columns. For Gumroad, use the public shop page to find each product title, description and permalink, then add those rows to the sample CSV. The URL importer currently supports the JenniNexus products page. Shopify, Etsy, and Gumroad links entered in the CSV open the original listings. [Shopify product export](https://help.shopify.com/en/manual/products/import-export/export-products) · [Etsy listing export](https://help.etsy.com/hc/en-us/articles/360000343508-How-to-Download-Your-Listing-Information) · [Gumroad product permalinks](https://gumroad.com/help/article/74-the-analytics-dashboard)
+## Scope
 
-**Make it yours.** Copy [`examples/storefront.example.json`](examples/storefront.example.json) to `.local/storefront.json` and edit the name and tagline. Leave `catalog_url` null for a blank example field or set it to the JenniNexus URL for a walkthrough. Store the PayPal and AI keys in your private environment settings separately.
+StoreLift is a **Sandbox-only preview tool**. It is not a payment processor, a hosted service or a storefront host: published files are previews for one browser session, and the shipped demo inventory is explicitly labelled test stock. Shopify, Etsy and Gumroad listings work through the CSV; a direct importer for them is not part of this version.
 
-The purchased Creator Demo Kit contains a planning worksheet and launch checklist. Use the repository sample above as the browser import template. The approved storefront is a preview for the current browser, with a JSON export. The Creator Demo Kit is the app's only PayPal Sandbox purchase.
+## Contributing
 
-### Review and approve
+MIT — use, fork, customize. See [`LICENSE`](LICENSE). The PayPal SDK loads from PayPal at checkout; everything else is local PHP, vanilla JavaScript and one stylesheet.
 
-1. Import your CSV or [the JenniNexus example](https://jenninexus.com/products). The example adapter preserves source statuses and action links, including separate tips and memberships.
-2. Review the descriptions and edit them as needed. When AI is configured, **Get AI suggestions** asks for editable descriptions, categories, suggested action labels, and missing-information warnings. The suggestions keep the source destinations and purchase settings intact.
-3. Approve the preview. Its revision and JSON export stay available in this browser session. The embeddable card links back to the same server for the separate Sandbox kit checkout.
+<div align="center">
 
-For example, a suggestion could shorten the PDF Designer copy to “Design PDFs with branded palettes and keep drafts in a private vault,” suggest the category “Document tools,” or ask whether to add setup requirements. This is an illustrative edit. **Use suggested description** copies the model's draft into an editable field. Approval saves your edits. Source destinations, membership and tip classifications, prices, and payment settings stay under the app's existing controls.
+If StoreLift helps you get a catalog online:
 
-AI suggestions require `STORELIFT_AI_ENDPOINT`, `STORELIFT_AI_MODEL` and `STORELIFT_AI_API_KEY` in the private configuration. Use your own authorized API key and a model that supports strict structured outputs. The supported endpoints are listed in [.env.example](.env.example). When you request suggestions, StoreLift sends listing text, statuses, action labels and destination hostnames to that provider. Manual review is available without AI. Configure provider-side usage controls before enabling AI on a public installation. [OpenAI structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs) · [OpenRouter structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs)
+[Star this repo](https://github.com/jenninexus/storelift) · [Links](https://jenninexus.com/links) · [Patreon](https://www.patreon.com/c/JenniNexus) · [PayPal](https://paypal.me/jenninexus)
 
-## Optional PayPal MCP
+Built by [Jenni](https://github.com/jenninexus) for the [PayPal AI Hackathon](https://paypalaihackathon.devpost.com/) · [jenninexus.com](https://jenninexus.com)
 
-The storefront runs with PHP, the PayPal JavaScript SDK and REST credentials. For a separate agent connection to your own sandbox account, see the [PayPal resources](docs/PAYPAL.md#optional-developer-tools) and [example MCP configuration](mcp/paypal-sandbox.example.json).
-
-## Development
-
-Run `php tests/checkout.php` for checkout and download checks with an isolated PayPal gateway. Run `php tests/catalog-import.php`, `php tests/catalog-csv.php` and `php tests/catalog-ai.php` for import and AI-response validation. Use the sandbox and catalog steps above to verify external integrations.
-
-The UI uses PHP templates, vanilla JavaScript and [a single stylesheet](public/assets/store.css). The stylesheet owns the surface, text, focus and motion tokens. It follows the browser color scheme and reduced-motion preference. It needs no asset build.
-
-The Creator Demo Kit source is in `kit/`. StoreLift and the kit are MIT licensed. The PayPal SDK loads directly from PayPal at checkout.
+</div>
